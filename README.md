@@ -1,5 +1,12 @@
 # zsh-config
 ## zsh 快速配置，不安装 ohmyzsh
+## 使用方法
+```sh
+# 记得加上 --recursive
+git clone --recursive https://github.com/rexSurprise/zsh-config.git
+# 如果克隆时忘记加 --recursive 可以执行下面这条命令
+git submodule update --init --recursive
+```
 
 ```sh
 # 基本设置 (将本仓库的zshrc_base放到下面的路径)
@@ -16,4 +23,3 @@ export https_proxy=http://127.0.0.1:7890
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 ```
-
