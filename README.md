@@ -25,8 +25,4 @@ git submodule update --init --recursive
 
 ## 3. 安装&配置 zsh 
 
-- **使用 `git-bash`打开本仓库**
-
-```shell
-bash install.sh
-```
+- **使用 `git-bash`打开本仓库后** `./install.sh`

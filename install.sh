@@ -27,4 +27,4 @@ if [ -t 1 ]; then
 fi
 EOF
 
-source /etc/bash.bashrc
+zsh
