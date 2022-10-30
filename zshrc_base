@@ -19,28 +19,52 @@ function git-branch-prompt() {
     if [ $branch ]; then printf "✨[%s]" $branch; fi
 }
 #}}}
+
 # 随机获取一个表情
 ICONS=(⚡ 🧡 💛 💚 💙 💜 🤎 🖤 🤍 💘 💝 💟 💌 💕 💞 💓 💗 💖 💟 💝 🔰 🔆)
 
 #命令提示符
-# RPROMPT=$(echo "$RED%D %T$FINISH")
-# PROMPT=$(echo "$CYAN%n@$YELLOW%M:$GREEN%/$_YELLOW>$FINISH")
-# PROMPT=$(echo "$CYAN$USER_ICON%n$USER_ICON$YELLOW%~$GREEN$(git-branch-prompt)$_YELLOW>>>$FINISH")
- 
+_prompt(){
+	# PROMPT=$(echo "$CYAN%n@$YELLOW%M:$GREEN%/$_YELLOW>$FINISH")
+	# PROMPT=$(echo "$CYAN$USER_ICON%n$USER_ICON$YELLOW%~$GREEN$(git-branch-prompt)$_YELLOW>>>$FINISH")
+	local _VENV_STR=""
+	if [ ! -z "$VIRTUAL_ENV" ];then
+		_VENV_STR="$MAGENTA✨(venv)"
+	fi
+	local USER_ICON=${ICONS[$(($RANDOM%${#ICONS}+1))]}
+	PROMPT=$(echo "$CYAN$USER_ICON%n$USER_ICON$YELLOW%~$GREEN$(git-branch-prompt)$_VENV_STR$_YELLOW %# $FINISH")
+	RPROMPT=$(echo "$USER_ICON$RED%D %T$FINISH$USER_ICON")
+}
+
 #PROMPT=$(echo "$BLUE%M$GREEN%/
 #$CYAN%n@$BLUE%M:$GREEN%/$_YELLOW>>>$FINISH ")
-#标题栏、任务栏样式{{{
-case $TERM in (*xterm*|*rxvt*|(dt|k|E)term)
-precmd () { 
-	USER_ICON=${ICONS[$(($RANDOM%${#ICONS}+1))]}
-	PROMPT=$(echo "$CYAN$USER_ICON%n$USER_ICON$YELLOW%~$GREEN$(git-branch-prompt)$_YELLOW %# $FINISH")
-	print -Pn "\e]0;%n@%M//%/\a"
- }
-preexec () { print -Pn "\e]0;%n@%M//%/\ $1\a" }
-;;
+#------------------------------
+# 标题栏、任务栏样式
+#------------------------------
+case $TERM in
+  termite|*xterm*|rxvt|rxvt-unicode|rxvt-256color|rxvt-unicode-256color|(dt|k|E)term)
+    precmd () {
+      _prompt
+			
+      print -Pn "\e]0;%n💫[%~]%#\a"
+    } 
+    preexec () { 
+			print -Pn "\e]0;%n💫[%~]%# ($1)\a"
+		}
+    ;;
+  screen|screen-256color)
+    precmd () { 
+      _prompt
+      print -Pn "\e]83;title \"$1\"\a" 
+      print -Pn "\e]0;$TERM - (%L) [%n@%M]%# [%~]\a" 
+    }
+    preexec () { 
+      print -Pn "\e]83;title \"$1\"\a" 
+      print -Pn "\e]0;$TERM - (%L) [%n@%M]%# [%~] ($1)\a" 
+    }
+    ;; 
 esac
-#}}}
- 
+
 #编辑器
 export EDITOR=vim
 #输入法
@@ -59,7 +83,7 @@ setopt INC_APPEND_HISTORY
 #如果连续输入的命令相同，历史纪录中只保留一个
 setopt HIST_IGNORE_DUPS
 #为历史纪录中的命令添加时间戳
-setopt EXTENDED_HISTORY      
+setopt EXTENDED_HISTORY
  
 #启用 cd 命令的历史纪录，cd -[TAB]进入历史路径
 setopt AUTO_PUSHD
@@ -67,7 +91,7 @@ setopt AUTO_PUSHD
 setopt PUSHD_IGNORE_DUPS
  
 #在命令前添加空格，不将此命令添加到纪录文件中
-#setopt HIST_IGNORE_SPACE
+setopt HIST_IGNORE_SPACE
 #}}}
  
 #杂项 {{{
